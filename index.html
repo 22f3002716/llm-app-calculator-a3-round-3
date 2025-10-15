@@ -3,37 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator</title>
-    <link rel="stylesheet" href="style.css">
+    <title>TypeScript Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+        }
+        .calculator {
+            border: 1px solid #c0c0c0;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 320px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-sizing: border-box;
+        }
+        .display {
+            width: 100%;
+            height: 60px;
+            font-size: 2.5em;
+            text-align: right;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e9ecef;
+            color: #333;
+            box-sizing: border-box;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: clip;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .button {
+            padding: 20px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #f5f5f5;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            color: #333;
+            outline: none;
+        }
+        .button:hover {
+            background-color: #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .button.operator {
+            background-color: #ff9f0a;
+            color: white;
+        }
+        .button.operator:hover {
+            background-color: #e68a00;
+        }
+        .button.clear {
+            background-color: #dc3545;
+            color: white;
+        }
+        .button.clear:hover {
+            background-color: #c82333;
+        }
+        .button.equals {
+            background-color: #28a745;
+            color: white;
+        }
+        .button.equals:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
     <div class="calculator">
-        <div class="calculator-display" id="result">0</div>
-        <div class="calculator-keys">
-            <button class="key-clear" data-action="clear">C</button>
-            <button class="key-unary-operator" data-action="sqrt">√</button>
-            <button class="key-operator" data-action="divide">/</button>
-            <button class="key-operator" data-action="multiply">*</button>
+        <input type="text" class="display" id="display" value="" readonly>
+        <div class="buttons">
+            <button class="button clear" onclick="clearDisplay()">C</button>
+            <button class="button operator" onclick="appendToDisplay('/')">/</button>
+            <button class="button operator" onclick="appendToDisplay('*')">*</button>
+            <button class="button operator" onclick="appendToDisplay('-')">-</button>
 
-            <button data-action="number">7</button>
-            <button data-action="number">8</button>
-            <button data-action="number">9</button>
-            <button class="key-operator" data-action="subtract">-</button>
+            <button class="button" onclick="appendToDisplay('7')">7</button>
+            <button class="button" onclick="appendToDisplay('8')">8</button>
+            <button class="button" onclick="appendToDisplay('9')">9</button>
+            <button class="button operator" onclick="appendToDisplay('+')">+</button>
 
-            <button data-action="number">4</button>
-            <button data-action="number">5</button>
-            <button data-action="number">6</button>
-            <button class="key-operator" data-action="add">+</button>
+            <button class="button" onclick="appendToDisplay('4')">4</button>
+            <button class="button" onclick="appendToDisplay('5')">5</button>
+            <button class="button" onclick="appendToDisplay('6')">6</button>
+            <button class="button equals" onclick="calculateResult()" style="grid-row: span 2; grid-column: 4;">=</button>
 
-            <button data-action="number">1</button>
-            <button data-action="number">2</button>
-            <button data-action="number">3</button>
-            <button class="key-equal" data-action="calculate">=</button>
+            <button class="button" onclick="appendToDisplay('1')">1</button>
+            <button class="button" onclick="appendToDisplay('2')">2</button>
+            <button class="button" onclick="appendToDisplay('3')">3</button>
 
-            <button class="key-zero" data-action="number">0</button>
-            <button data-action="decimal">.</button>
+            <button class="button" onclick="appendToDisplay('0')" style="grid-column: span 2;">0</button>
+            <button class="button" onclick="appendToDisplay('.')">.</button>
         </div>
     </div>
-    <script src="script.js"></script>
+
+    <script src="logic.js"></script>
+    <script>
+        const display = document.getElementById('display');
+        let currentExpression = '';
+        let resultDisplayed = false;
+
+        function appendToDisplay(value) {
+            if (resultDisplayed) {
+                currentExpression = '';
+                resultDisplayed = false;
+            }
+            currentExpression += value;
+            display.value = currentExpression;
+        }
+
+        function clearDisplay() {
+            currentExpression = '';
+            display.value = '';
+            resultDisplayed = false;
+        }
+
+        function calculateResult() {
+            if (currentExpression === '') return;
+            // The calculate function is globally available from logic.js
+            const result = window.calculate(currentExpression);
+            display.value = result;
+            currentExpression = String(result); // Set current expression to result for chained operations
+            resultDisplayed = true;
+        }
+    </script>
 </body>
 </html>
